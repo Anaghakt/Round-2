@@ -1,0 +1,106 @@
+# Implementation of required functions in Python
+
+# Simulated in-memory storage for collections
+collections = {}
+
+# Create a new collection with the given name
+def createCollection(p_collection_name):
+    if p_collection_name not in collections:
+        collections[p_collection_name] = []
+        print(f"Collection '{p_collection_name}' created.")
+    else:
+        print(f"Collection '{p_collection_name}' already exists.")
+
+# Index data for the collection excluding a specific column
+def indexData(p_collection_name, p_exclude_column):
+    if p_collection_name not in collections:
+        print(f"Collection '{p_collection_name}' does not exist.")
+        return
+    
+    # Dummy employee data to index for illustration
+    employees = [
+        {"EmpId": "E02001", "Name": "Alice", "Department": "IT", "Gender": "Female"},
+        {"EmpId": "E02002", "Name": "Bob", "Department": "HR", "Gender": "Male"},
+        {"EmpId": "E02003", "Name": "Charlie", "Department": "Finance", "Gender": "Male"},
+        {"EmpId": "E02004", "Name": "David", "Department": "IT", "Gender": "Male"}
+    ]
+    
+    # Exclude the specified column from the data
+    for emp in employees:
+        if p_exclude_column in emp:
+            del emp[p_exclude_column]
+        collections[p_collection_name].append(emp)
+    print(f"Indexed data into collection '{p_collection_name}', excluding column '{p_exclude_column}'.")
+
+# Search records in the collection by column name and value
+def searchByColumn(p_collection_name, p_column_name, p_column_value):
+    if p_collection_name not in collections:
+        print(f"Collection '{p_collection_name}' does not exist.")
+        return []
+
+    # Retrieve records that match the search criteria
+    result = [emp for emp in collections[p_collection_name] if emp.get(p_column_name) == p_column_value]
+    print(f"Search results in '{p_collection_name}' for {p_column_name} = '{p_column_value}': {result}")
+    return result
+
+# Get the count of employees in the specified collection
+def getEmpCount(p_collection_name):
+    if p_collection_name not in collections:
+        print(f"Collection '{p_collection_name}' does not exist.")
+        return 0
+    count = len(collections[p_collection_name])
+    print(f"Employee count in collection '{p_collection_name}': {count}")
+    return count
+
+# Delete an employee by their ID
+def delEmpById(p_collection_name, p_employee_id):
+    if p_collection_name not in collections:
+        print(f"Collection '{p_collection_name}' does not exist.")
+        return
+
+    # Remove the employee with the given ID
+    collections[p_collection_name] = [emp for emp in collections[p_collection_name] if emp.get("EmpId") != p_employee_id]
+    print(f"Employee with ID '{p_employee_id}' deleted from collection '{p_collection_name}'.")
+
+# Retrieve the count of employees grouped by department
+def getDepFacet(p_collection_name):
+    if p_collection_name not in collections:
+        print(f"Collection '{p_collection_name}' does not exist.")
+        return {}
+
+    department_count = defaultdict(int)
+    for emp in collections[p_collection_name]:
+        department_count[emp.get("Department", "Unknown")] += 1
+
+    print(f"Department facets in collection '{p_collection_name}': {dict(department_count)}")
+    return department_count
+
+# Function execution with specified parameters
+v_nameCollection = 'Hash_YourName'
+v_phoneCollection = 'Hash_1234'
+
+# Create the collections
+createCollection(v_nameCollection)
+createCollection(v_phoneCollection)
+
+# Get initial employee count in the name collection
+getEmpCount(v_nameCollection)
+
+# Index employee data excluding specific columns
+indexData(v_nameCollection, 'Department')
+indexData(v_phoneCollection, 'Gender')
+
+# Delete an employee by ID
+delEmpById(v_nameCollection, 'E02003')
+
+# Get the updated employee count in the name collection
+getEmpCount(v_nameCollection)
+
+# Perform searches based on column criteria
+searchByColumn(v_nameCollection, 'Department', 'IT')
+searchByColumn(v_nameCollection, 'Gender', 'Male')
+searchByColumn(v_phoneCollection, 'Department', 'IT')
+
+# Get department facets for both collections
+getDepFacet(v_nameCollection)
+getDepFacet(v_phoneCollection)
